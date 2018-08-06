@@ -1,0 +1,18 @@
+{
+    "name": "viandwi24/vcms",
+    "description": "CMS yang cepat dan mudah untuk memanajemen halaman web.",
+    "license": "MIT",
+    "type": "project",
+    "require": {
+    },
+    "require-dev": {
+    },
+    "autoload": {
+        "classmap": [
+        ],
+        "psr-4": {
+            "vframework\\": "packages/viandwi24/framework/src"
+        }
+    },
+    "minimum-stability": "dev"
+}

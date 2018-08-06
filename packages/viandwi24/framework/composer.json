@@ -1,0 +1,19 @@
+{
+    "name": "viandwi24/framework",
+    "description": "Framework PHP Sederhana.",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "viandwi24",
+            "email": "fiandwi0424@gmail.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "vframework\\": "src/"
+        }
+    },
+    "minimum-stability": "dev",
+    "require": {}
+}
