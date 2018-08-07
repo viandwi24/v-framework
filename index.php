@@ -10,8 +10,8 @@
 
 /*|-------------------------------------------------------------------------|*/
 define("APP_NAME", "V-FRAMEWORK");
-define("APP_VERSION", "1.3.1 (Dalam Tahap Pengembangan)");
-define("APP_AUTHOR", "Alfian Dwi <fiandwi0424@gmail.com>");
+define("APP_VERSION", "1.3.2");
+define("APP_AUTHOR", "Alfian Dwi Nugraha <fiandwi0424@gmail.com>");
 
 $protocol = 'http';
 if (isset($_SERVER['HTTPS'])) {

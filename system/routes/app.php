@@ -43,7 +43,7 @@ use vframework\base\view;
 
 
 
-route::get('/', 'HomeController@index');
+route::get('/', 'HomeController@index'); #HOME ditandai dengan url request satu slash saja /
 
 route::get('/dokumentasi', function(){
 	return view::make('docs');
@@ -55,4 +55,8 @@ route::get('/tentang', function(){
 				<b>APP_AUTHOR :</b>".APP_AUTHOR."<br>
 			   ";
 	return $string;
+});
+
+route::get('/user/{nama}', function($params){
+	return 'Nama Mu Adalah : ' . $params->nama;
 });

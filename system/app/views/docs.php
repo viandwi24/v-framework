@@ -121,17 +121,7 @@
 				<p>Atau anda juga dapat menulis fungsi langsung kedalam route tanpa harus meneruskanya ke Controller.</p>
 				<pre class="box-code">route::get('/about', function(){
 	echo "Hello Wolrd!";
-});</pre>
-
-			</div>
-		</div>
-		<div class="card" style="width: 100%;">				
-			<div class="card-body">
-				<h2 id="controller"># Controller</h2><hr>
-				<p>Folder Controller berada pada :</p>
-				<pre class="box-code">system\app\controllers
-				</pre>
-				<br>
+});</pre>		<br>
 				<h3>Menerima Parameter Segmen Url</h3>
 				<p>
 					Berhubung dengan router, terkadang kita perlu mengambil data melalui salah satu
@@ -146,6 +136,12 @@
 				<pre class="box-code">public function user ($params) {
 	echo 'Nama Kamu Adalah : ' . $params->nama;
 }</pre>
+				<p>
+					Atau anda juga bisa langsung menulisnya dalam router tanpa harus ke controller :
+				</p>
+				<pre class="box-code">route::get('/user/{nama}', function($params) {
+	return echo "Nama Kamu Adalah : " . $params->nama;
+}</pre>
 				<br>
 				<h3>Menerima Parameter Segmen Url Bersifat Opsional</h3>
 				<p>
@@ -156,6 +152,72 @@
 					Dengan begitu jika url dikosongi sebagai contoh ada yang mengakses <b>/page/</b> maka
 					dia akan tetap dialihkan ke route tersebut.
 				</p>
+				<br><br><br>
+				<h2 id="router"># Router - Error</h2><hr>
+				<p>
+					Tidak hanya router untuk web, kami juga pada versi <b>1.3.2</b> telah merilis fitur
+					route error, yang berguna untuk menampung segala bentuk error.
+				</p>
+				<p>File Router Error Berada Pada : </p>
+				<pre class="box-code">system\routes\error.php</pre>
+				<p>
+					Ada beberapa Route Error Dari Kami Untuk System Yang Tidak Boleh Dihapus! Salah satunua adalah <b>system_error</b> dan <b>404</b>, Kami
+					telah menandainya dengan komentar agar kalian tidak menghapusnya.
+				</p>
+				<p>Untuk Membuat Custom Error Anda Sendiri, Cukup Buat Baris Baru Lalu Ketik :</p>
+				<pre class="box-code">route::error("404", function($arg){
+	return "Error 404! - $arg[0]";
+});</pre>
+			<p>Lalu untuk panggil di controller :</p>
+			<pre class="box-code">error::custom("404", "Url Tidak Ditemukan.");</pre>
+			<p>jangan Lupakan Library Error Untuk Meloadnya di controller :</p>
+			<pre class="box-code">use vframework\kernel\error;</pre>
+			<br><br>
+			<p>Contoh Lainya Adalah Berikut :</p>
+			<pre class="box-code">####### system\routes\app.php
+route::error("user_404", function($arg){
+	return "Error!, User dengan nama " . $arg[0] . " dan email " . $arg[1] . " tidak ditemukan!";
+});
+
+
+
+####### Lalu Tulis berikut Di Controller
+use vframework\kernel\error;
+
+class PageController {
+
+	public function user(){
+		return error::custom("user_404", "Alfian Dwi Nugraha", "fiandwi0424@gmail.com");
+	}
+
+}
+
+
+
+##### lalu output yang dihasilkan adalah :
+Error!, User dengan nama Alfian Dwi Nugraha dan email fiandwi0424@gmail.com tidak ditemukan!</pre>
+
+			</div>
+		</div>
+		<div class="card" style="width: 100%;">				
+			<div class="card-body">
+				<h2 id="controller"># Controller</h2><hr>
+				<p>Folder Controller berada pada :</p>
+				<pre class="box-code">system\app\controllers
+				</pre>
+				<p>
+					Contoh Class kosong dari controller adalah sebagia berikut :
+				</p>
+				<pre class="box-code">&lt;?php
+
+use vframework\kernel\request as Request;
+use vframework\base\view;
+
+class HomeController {
+}</pre>
+			<p>
+				Nama File Dan Nama Class Juga Harus Sama Dalam Bentuk Apapun, Diatas Nama Class adalah <b>HomeController</b>, Maka Kalian Juga Harus Menyimpan Class Tersebut Dengan Nama <b>HomeController.php</b>.
+			</p>
 			</div>
 		</div>
 

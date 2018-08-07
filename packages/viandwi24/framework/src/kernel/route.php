@@ -11,6 +11,8 @@ static $route_get = array();
 static $route_post = array();
 static $temp_route;
 
+static $route_error = array();
+
 	public function get($reqUrl, $response){
 		self::$route_get[count(self::$route_get)] = array(self::clean_url($reqUrl), $response, array(), array());
 		self::$temp_route = 'get';
@@ -68,7 +70,7 @@ static $temp_route;
 
 		if (!$route_post_now) {
 			if (!$route_get_now) {
-				error::force(404);
+				error::custom('404');
 			}
 		}
 
@@ -85,14 +87,11 @@ static $temp_route;
 
 
 			## HANDLE URL YANG MEMILIKI KARAKTER KHUSUS / ANEH
-			$block_word = array("?", "{", "}", ".", "#");
+			$block_word = array("?", "{", "}", "#");
 
 			foreach ($block_word as $bw_k => $bw_v) {
 				if (strpos(implode('/', $reqUrl), $bw_v) !== false) {
-					echo "URL Berisi Karakter/kata yang tidak diperbolehkan :";
-					echo '<div style="border: 1px solid red;padding: 5px;text-align: center;">';
-					echo implode('   ', $block_word);
-					echo '</div>';
+					error::custom('system_error', "URL Berisi Character Yang Tidak Di Perbolehkan", implode('    ', $block_word));
 					die();
 				}
 			}
@@ -154,7 +153,7 @@ static $temp_route;
 
 				### LOAD CONTROLLER or LAUNCH FUNCTION
 				if (is_callable($rp_v[1])) {
-					echo $rp_v[1]();
+					echo $rp_v[1]((object) $params , new Request());
 				} else {
 					$controller_dir = config::$app_dir . '/controllers';
 					$rp_v_a = explode('@', $rp_v[1]);
@@ -181,4 +180,30 @@ static $temp_route;
 			return $success;
 	}
 
+
+	#####################################################################################
+	public function error($error_name, $error_function) {
+		self::$route_error[count(self::$route_error)] = array($error_name, $error_function);
+		return new static;
+	}
+	public function getError($error_name, $args) {
+		if ($error_name != '') {
+			foreach (self::$route_error as $re_k => $re_v) {
+				if ($re_v[0] == $error_name) {
+					if (is_callable($re_v[1])) {
+						echo $re_v[1]($args);
+					} else {
+						echo "Error : route::error('name', function(){}), Parameter 2 Harus Berbentuk Fungsi!";
+					}
+					break;
+				}
+			}
+		} else {
+			echo "Error : route::getError($error_name, $args), $error_name tidak memiliki value!";
+		}
+		die();
+	}
+
 }
+
+

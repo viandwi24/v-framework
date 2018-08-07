@@ -27,8 +27,8 @@ static $app_dir;
 			die();
 		}
 
-		if ($key != '') {
-			return $config[$key];
+		if ($key != '' and isset($key)) {
+			return @$config[$key];
 		}
 	}
 
@@ -37,7 +37,11 @@ static $app_dir;
 
 		switch ($key) {
 			case 'base_url':
-				return BASE_URL;
+				if (null !== (self::getNow('base_url')) and self::getNow('base_url') != '') {
+					return self::getNow('base_url');
+				} else {
+					return BASE_URL;
+				}
 				break;
 			
 			default:

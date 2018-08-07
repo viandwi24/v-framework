@@ -3,6 +3,7 @@
 namespace vframework\kernel;
 
 use vframework\kernel\config;
+use vframework\kernel\route;
 
 class error {
 	static $error_view_dir;
@@ -21,5 +22,16 @@ class error {
 				break;
 		}
 		die();
+	}
+
+	public function custom(){
+		$arg = func_get_args();
+		$error_name = $arg[0];
+		unset($arg[0]);
+		$arg = implode('[]', $arg);
+		$arg = explode('[]', $arg);
+
+		require config::$route_dir . '/error.php';
+		route::getError($error_name, $arg);
 	}
 }
