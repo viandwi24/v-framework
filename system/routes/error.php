@@ -11,7 +11,7 @@ route::error('system_error', function($arg){
 
 	return $string;
 });
-route::error('404', function($arg){
+route::error('404', function(){
 	return view::make('error.404', ['description' => 'Alamat URL Yang Diminta Tidak Ada.']);
 });
 

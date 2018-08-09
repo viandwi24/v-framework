@@ -58,7 +58,12 @@ route::get('/tentang', function(){
 	return $string;
 });
 
-### CONTOH MENGAMBIL SEGEMNT PARAMETER DARI URL
 route::get('/user/{nama}', function($params){
 	return 'Nama Mu Adalah : ' . $params->nama;
+});
+
+
+
+route::get('/coba', function(){
+	return db::tb('tb_auth')->where('id', 1)->get();
 });

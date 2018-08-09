@@ -70,7 +70,7 @@ static $route_error = array();
 
 		if (!$route_post_now) {
 			if (!$route_get_now) {
-				error::custom('404');
+				error::make('404');
 			}
 		}
 
@@ -91,7 +91,7 @@ static $route_error = array();
 
 			foreach ($block_word as $bw_k => $bw_v) {
 				if (strpos(implode('/', $reqUrl), $bw_v) !== false) {
-					error::custom('system_error', "URL Berisi Character Yang Tidak Di Perbolehkan", implode('    ', $block_word));
+					error::make('system_error', "URL Berisi Character Yang Tidak Di Perbolehkan", implode('    ', $block_word));
 					die();
 				}
 			}
@@ -139,7 +139,6 @@ static $route_error = array();
 			if ($sama) {
 
 				$success = true;
-
 				$middleware_dir = config::$app_dir . '/middleware';
 				$beforeMiddleware = $rp_v[2];
 				$afterMiddleware = $rp_v[3];

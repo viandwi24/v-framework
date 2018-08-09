@@ -77,7 +77,7 @@
 				<br>
 				<span>Lihat Lainya :</span>
 				<ul>
-					<li><a href="dokumentasi">Simpel Dokumentasi</a></li>
+					<li><a href="dokumentasi">Dokumentasi</a></li>
 					<li><a href="tentang">Tentang Aplikasi</a></li>
 					<li><a target="_blank" href="https://github.com/viandwi24/v-framework">Sumber Kode Di Github</a></li>
 					<li><a target="_blank" href="https://fb.com/viandwicyber">Facebook Penulis</a></li>

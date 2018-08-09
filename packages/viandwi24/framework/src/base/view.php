@@ -16,6 +16,7 @@ class view {
 		}
 
 		ob_start();
+		require __DIR__ . '../../view/function.php';
 		require $view_dir . '/' . $filename . '.php';
 		$output = ob_get_contents();
 		ob_end_clean();

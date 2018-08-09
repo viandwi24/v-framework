@@ -11,7 +11,8 @@
         "classmap": [
         ],
         "psr-4": {
-            "vframework\\": "packages/viandwi24/framework/src"
+            "vframework\\": "packages/viandwi24/framework/src",
+            "app\\": "system/app"
         }
     },
     "minimum-stability": "dev"

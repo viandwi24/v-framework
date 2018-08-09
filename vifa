@@ -1,0 +1,126 @@
+<?php
+/*
+|--------------------------------------------------------------------------
+| Pengaturan Dasar V-CMS
+|--------------------------------------------------------------------------
+|
+| Berisi pengaturan dasar v-cms, harap jangan mengedit jika tidak paham
+| tentang ini.
+|
+*/
+define('START', microtime(true));
+define('ROOT', __DIR__);
+define('SYSTEM_ROOT', ROOT . '/system');
+define('BOOT_CONFIG', SYSTEM_ROOT . '/boot_config.php');
+/*
+|--------------------------------------------------------------------------
+| Composer Auto Load
+|--------------------------------------------------------------------------
+|
+| Composer telah menyediakan manajemen package yang baik, jadi kami memakai
+| Composer untuk membuat aplikasi ini agar lebih baik lagi.
+|
+*/
+require __DIR__ . '/vendor/autoload.php';
+
+use vframework\kernel\console;
+$console = new console();
+
+/*|-------------------------------------------------------------------------|*/
+if (PHP_SAPI !== 'cli') {
+    die('You are not allowed to perform this action');
+}
+/*|-------------------------------------------------------------------------|*/
+if (count($argv) == 1) {
+	help();
+} elseif (isset($argv[1])) {
+	switch ($argv[1]) {
+		#### membuat Controller
+		case 'add:controller':
+			if (isset($argv[2])) {
+				$proses = $console->add_controller($argv[2]);
+				if ($proses) {
+					success("Controller Berhasil Dibuat", "Path : system\\app\\controllers\\".$argv[2].".php");
+				}
+			} else {
+				error("Nama Controller Tidak Terisi!", "php vifa add:controller [nama_controller]");
+			}
+			break;
+
+		#### menghapus controller
+		case 'del:controller':
+			if (isset($argv[2])) {
+				$proses = $console->del_controller($argv[2]);
+				if ($proses) {
+					success("Controller Berhasil Dihapus", "Path : system\\app\\controllers\\".$argv[2].".php");
+				}
+			} else {
+				error("Nama Controller Tidak Terisi!", "php vifa del:controller [nama_controller]");
+			}
+			break;
+		
+		#### Mereset Semua Routes
+		case 'reset:routes':
+			if (isset($argv[2])) {
+				$proses = $console->reset_routes($argv[2]);
+				if ($proses) {
+					success("Routes Berhasil Direset.", "File Routes : " . $argv[2]);
+				}
+			} else {
+				error("Tentukan file Routes yang ingin diahpus!", "Contoh : php vifa reset:routes app");
+			}
+			break;		
+
+		#### Memunculkan Help
+		case 'help':
+			help();
+			break;
+		default:
+			error("Perintah yang anda masukan tidak terdaftar!", "Coba ]=> php vifa help");
+			break;
+	}
+}
+
+function help(){
+	console_header();
+	echo "==[ Daftar Perintah :\n\n";
+	echo "	add:controller	| Membuat File Controlller\n";
+	echo "	add:model	| Membuat File Model\n";
+	echo "\n";
+	echo "	del:controller 	| Hapus Controller\n";
+	echo "	del:model 	| Hapus Model\n";
+	echo "\n";
+	echo "	reset:routes 	| Mereset File Routes\n";
+	echo " 	[app|error|console|api]\n";
+	echo "\n\n";
+	echo "	help 	| Memunculkan menu help\n";
+	console_footer();
+}
+
+function console_header(){
+	echo "\n\n";
+	echo "======================================================\n";
+	echo "====================[VIFA FRAMEWORK]==================\n";
+	echo "======================================================\n";
+	echo "\n";
+}
+function console_footer(){
+	echo "\n\n";
+	echo "======================================================\n";
+	echo "============[(C) 2018 by Alfian Dwi Nugraha]==========\n";
+	echo "======================================================\n";
+	echo "\n\n";
+	die();
+}
+function error($msg, $fix){
+	console_header();
+	echo "==[ Error : " . $msg;
+	echo "\n==[ Fix : " . $fix;
+	console_footer();
+}
+function success($msg, $description){
+	console_header();
+	echo "==[ Success : " . $msg;
+	echo "\n==[ Description : " . $description;
+	console_footer();
+}

@@ -80,14 +80,20 @@
 	<div class="container">
 		<h1 style="margin-top: 50px;">
 			SIMPEL DOCUMENTATION 
-			<small style="font-size: 14px;"><a href=".">Kembali Ke Home</a></small>
+			<small style="font-size: 14px;"><a href="<?php echo base_url();?>">Kembali Ke Home</a></small>
 		</h1><hr>
 		<div class="card" style="width: 100%;">
 			<div class="card-body">
+				<b>Telah Dirilis :</b>
 				<ul>
 					<li><a href="#router">Router</a></li>
 					<li><a href="#controller">Controller</a></li>
 					<li><a href="#view">View</a></li>
+					<li><a href="#console">Console</a></li>
+					<li><a href="#lib-db">Library - DB</a></li>
+				</ul>
+				<b>Coming Soon :</b>
+				<ul>
 					<li>Model (Dalam Pengembangan)</li>
 					<li>Middleware (Telah Ada Tetapi Dalam Uji Coba)</li>
 				</ul>
@@ -169,7 +175,7 @@
 	return "Error 404! - $arg[0]";
 });</pre>
 			<p>Lalu untuk panggil di controller :</p>
-			<pre class="box-code">error::custom("404", "Url Tidak Ditemukan.");</pre>
+			<pre class="box-code">error::make("404", "Url Tidak Ditemukan.");</pre>
 			<p>jangan Lupakan Library Error Untuk Meloadnya di controller :</p>
 			<pre class="box-code">use vframework\kernel\error;</pre>
 			<br><br>
@@ -250,6 +256,110 @@ class HomeController {
 				<pre class="box-code">view::make('home', ['nama' => 'alfian dwi', 'umur' => 16]);</pre>
 				<p>Lalu untuk mengeluarkan data yang dikirim, tuliskan kode berikut di view :</p>
 				<pre class="box-code">&lt;?php echo "Nama Mu : $nama dan Umur Mu : $umur";?&gt;</pre>
+				<br>
+				<h3>Lainya</h3>
+				<p><b># Mengeluarkan Base Url Di View File : </b></p>
+				<pre class="box-code">&lt;a href="&lt;?php echo base_url();?&gt;"&gt;Klik Disini&lt;/a&gt; </pre>
+				<pre class="box-code">&lt;a href="&lt;?php echo base_url('artikel/post/1');?&gt;"&gt; GO &lt;/a&gt; </pre>
+				<p><b># Mengeluarkan Url Sekarang (Now Url) Di View File : </b></p>
+				<pre class="box-code">&lt;a href="&lt;?php echo now_url();?&gt;"&gt;Refresh Halaman&lt;/a&gt; </pre>
+			</div>
+		</div>
+
+		<div class="card" style="width: 100%;">				
+			<div class="card-body">
+				<h2 id="console"># Console</h2><hr>
+				<p>
+					Console mode cli membantu anda dalam pembuatan projek dengan vframework.
+				</p>
+				<p>
+					Cukup arahkan terminal / cmd ke base root projeck v-cms lalu ketik :
+				</p>
+				<pre class="box-code">php vifa</pre>
+				<p>Lalu akan muncul tampilan berikut :</p>
+				<img src="assets/img/upload/1.png">
+				<br><br>
+				<h4>Contoh Pengaplikasian :</h4>
+				<p>Membuat File Controller Baru : </p>
+				<pre class="box-code">php vifa add:controller HomeController</pre>
+				<p><b>HomeController</b> merupakan nama controller yang akan dibuat.</p>
+			</div>
+		</div>
+
+		<div class="card" style="width: 100%;">				
+			<div class="card-body">
+				<h2 id="lib-db"># Library - DB</h2><hr>
+				<p>Library Ini Mendukung mysqli saja.</p>
+				<p><b>Class Library DB :</b></p>
+				<pre class="box-code">use vframework\lib\DB;</pre>
+				<p><b>Konfigurasi Database :</b></p>
+				<pre class="box-code">system\config\db.php</pre>
+				
+				<hr style="margin-top: 15px;">
+				<h3>Menampilkan</h3>
+				<p>
+					Untuk menampilkan data (read) anda memerlukan fungsi GET().
+				</p>
+				<pre class="box-code">db::tb("tabel_admin")->get();</pre>
+				<p>
+					<b>tb()</b> merupakan fungsi untuk meng-set nama tabel, lalu <b>get()</b> untuk mengambil result data.
+				</p>
+				<br><br>
+				<p><b># Dengan Where</b> :</p>
+				<pre class="box-code">db::tb("tabel_admin")->where('id', 1)->get();</pre>
+				<p><b>Hasil Query :</b> SELECT * FROM tabel WHERE id='1'</p>
+				<pre class="box-code">db::tb("tabel_admin")->where('level','!=', 'user')->get();</pre>
+				<p><b>Hasil Query :</b> SELECT * FROM tabel WHERE level!='user'</p>
+				<pre class="box-code">db::tb("tabel_admin")->where('id', 1)->where('level', 'admin')->get();</pre>
+				<p><b>Hasil Query :</b> SELECT * FROM tabel WHERE id='1' AND level='admin'</p>
+
+				<hr style="margin-top: 15px;">
+				<h3>Menambah</h3>
+				<p>
+					Untuk menambah data (insert) anda memerlukan fungsi INSERT().
+				</p>
+				<pre class="box-code">db::tb("tabel_admin")->insert($array);</pre>
+				<br><br>
+				<p><b># INSERT satu data</b> :</p>
+				<pre class="box-code">
+$data = ['nama' => 'alfian dwi', 'umur' => 16];
+$proses = db::tb("tabel_admin")->insert($data);
+if ($proses) {
+	echo "Berhasil";
+}
+</pre>
+				<p><b># INSERT lebih dari satu data</b> :</p>
+				<pre class="box-code">
+$data = [
+			['nama' => 'alfian dwi', 'umur' => 16],
+			['nama' => 'deasy mutiara', 'umur' => 17],
+			['nama' => 'dutta sadewa', 'umur' => 18],
+		];
+$proses = db::tb("tabel_admin")->insert($data);
+if ($proses) {
+	echo "Berhasil";
+}
+</pre>	
+				<hr style="margin-top: 15px;">
+				<h3>Memperbarui</h3>
+				<p>
+					Untuk memperbarui data (update) anda memerlukan fungsi UPDATE().
+				</p>
+				<p><b># Update Satu Kolom :</b></p>
+				<pre class="box-code">db::tb("tabel_admin")->where('id', 1)->update('nama', 'alfian dwi n');</pre>
+				<p><b># Update lebih dari satu kolom :</b></p>
+				<pre class="box-code">
+$array_update = ['nama' => 'alfian dwi nugraha', 'umur' => 17];
+db::tb("tabel_admin")->where('id', 1)->update($array_update);
+</pre>
+
+				<hr style="margin-top: 15px;">
+				<h3>Menghapus</h3>
+				<p>
+					Untuk menghapus data (delete) anda memerlukan fungsi DELETE().
+				</p>
+				<pre class="box-code">db::tb("tabel_admin")->where('id', 1)->delete();</pre>
+
 			</div>
 		</div>
 	</div>

@@ -7,4 +7,5 @@ $baseDir = dirname($vendorDir);
 
 return array(
     'vframework\\' => array($baseDir . '/packages/viandwi24/framework/src'),
+    'app\\' => array($baseDir . '/system/app'),
 );

@@ -11,12 +11,20 @@ class ComposerStaticInitdc9d22fed28df997502a1d6f8557382f
         array (
             'vframework\\' => 11,
         ),
+        'a' => 
+        array (
+            'app\\' => 4,
+        ),
     );
 
     public static $prefixDirsPsr4 = array (
         'vframework\\' => 
         array (
             0 => __DIR__ . '/../..' . '/packages/viandwi24/framework/src',
+        ),
+        'app\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/system/app',
         ),
     );
 

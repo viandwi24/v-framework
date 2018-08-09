@@ -6,9 +6,8 @@ class config {
 static $config_dir;
 static $route_dir;
 static $app_dir;
-
-	public function getNow($key = '')
-	{
+	
+	public function apply(){
 		if (file_exists(BOOT_CONFIG)){
 			require BOOT_CONFIG;
 			self::$config_dir = $boot['config_dir'];
@@ -19,11 +18,17 @@ static $app_dir;
 			trigger_error("[error#bx001] BOOT_CONFIG tidak ditemukan!");
 			die();
 		}
+	}
 
-		if (file_exists(self::$config_dir . '/app.php')){
+	public function getNow($key = '')
+	{
+		self::apply();
+
+		if (file_exists(self::$config_dir . '/app.php') and file_exists(self::$config_dir . '/db.php')){
 			require self::$config_dir . '/app.php';
+			require self::$config_dir . '/db.php';
 		} else {
-			trigger_error("[error#bx002] CONFIG/APP tidak ditemukan!");
+			trigger_error("[error#bx002] CONFIG/APP or CONFIG/DB tidak ditemukan!");
 			die();
 		}
 
