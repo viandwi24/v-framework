@@ -1,0 +1,310 @@
+<?php
+
+define('ROOT', __DIR__);
+define('SYSTEM_ROOT', ROOT . '/system');
+
+if (PHP_SAPI !== 'cli') {
+    die('You are not allowed to perform this action');
+}
+
+
+if (count($argv) == 1) {
+	desain('HEADER');
+	#################
+	desain('TITLE', 'Tidak Ada Perintah Yang Diberikan.');
+	
+	echo "php vifa help 	-Untuk Melihat Perintah - Perintah Lainya";
+	#################
+	desain('FOOTER');
+} elseif (count($argv) >= 2) {
+	switch ($argv[1]) {
+		case 'help':
+			help();
+			break;
+		case 'add:controller':
+			if (isset($argv[2])) {
+				add('controller', $argv[2]);
+			} else {
+				error('Nama Controller Harus Diisi!', 'Ex : php vifa add:controller HomeController');
+			}
+			break;
+		case 'add:model':
+			if (isset($argv[2])) {
+				add('model', $argv[2]);
+			} else {
+				error('Nama Model Harus Diisi!', 'Ex : php vifa add:model tbauth');
+			}
+			break;
+		case 'migration:install':
+			if (isset($argv[2])) {
+				run_migration('install', $argv[2]);
+			} else {
+				error('Nama Migration Harus Diisi!', 'Ex : php vifa migration:install mymigration');
+			}
+			break;
+		case 'migration:create':
+			if (isset($argv[2])) {
+				run_migration('create', $argv[2]);
+			} else {
+				error('Nama Migration Harus Diisi!', 'Ex : php vifa migration:create mymigration');
+			}
+			break;
+		case 'migration:list':
+			run_migration('list', '');
+			break;
+		
+		default:
+			desain('HEADER');
+			#################
+			desain('TITLE', 'Perintah Yang Diberikan Tidak Terdaftar.');
+			
+			echo "php vifa help 	-Untuk Melihat Perintah - Perintah Lainya";
+			#################
+			desain('FOOTER');
+			break;
+	}
+}
+
+
+
+function desain(){
+	$arg = func_get_args();
+	$type = $arg[0];
+
+	if ($type == 'HEADER') {
+	echo "\n\n";
+	echo "==========================================================\n";
+	echo "======================[VIFA FRAMEWORK]====================\n";
+	echo "==========================================================\n";
+	echo "\n";
+	} elseif ($type == 'FOOTER') {
+	echo "\n\n";
+	echo "==========================================================\n";
+	echo "=================[(C) 2018 by Alfian Dwi N]===============\n";
+	echo "==========================================================\n";
+	echo "\n";
+	} elseif ($type == 'TITLE') {
+		echo "====[ " . $arg[1];
+		echo "\n\n";
+	}
+}
+
+
+function help(){
+	desain('HEADER');
+	#################
+	desain('TITLE', 'Daftar Perintah VIFA FRAMEWORK CONSOLE :');
+	
+	echo "	add:controller 		-Membuat Controller\n";
+	echo "	add:model 		-Membuat Model\n";
+	echo "\n";
+	echo "	migration:install 	-Memasang File Migration\n";
+	echo "	migration:create 	-Membuat File Migration\n";
+	echo "	migration:list 		-Melihat Daftar File Migration\n";
+	echo "\n";
+	echo "	help 			-Untuk Melihat Perintah Perintah Lainya\n";
+	echo "	v 			-Melihat Versi Vifa Console\n";
+	#################
+	desain('FOOTER');
+}
+function error($msg, $fix){
+	desain('HEADER');
+	#################
+	desain('TITLE', 'Error : ' . $msg);
+	desain('TITLE', 'Fix : ' . $fix);	
+	#################
+	desain('FOOTER');
+	exit(1);
+	die();
+}
+function success($msg, $fix){
+	desain('HEADER');
+	#################
+	desain('TITLE', 'Success : ' . $msg);
+	desain('TITLE', 'Description : ' . $fix);	
+	#################
+	desain('FOOTER');
+	exit(1);
+	die();
+}
+
+function add(){
+	$arg = func_get_args();
+	$type = $arg[0];
+
+	$app_dir	= SYSTEM_ROOT . '/app';
+
+	switch ($type) {
+		case 'controller':
+			$file = $app_dir . '/controllers/' . $arg[1] . '.php';
+			if (file_harus_tidak_ada($file)) {
+				$filenya = <<<EOT
+<?php
+
+use vframework\\request\\request as Request;
+use vframework\\base\\view;
+
+class {1} {
+	## Buat Method Baru
+}
+EOT;
+				$filenya = str_replace('{1}', $arg[1], $filenya);
+				if (file_put_contents($file, $filenya)) {
+					success('Controller Berhasil Dibuat!', 'system/app/controllers/'.$arg[1].'.php');
+				} else {
+					error('Gagal Membuat Controller!', 'Cek Akses Permisi Atau Lainya');
+				}
+			} else {
+				error('Controller [' . $arg[1] . '] Sudah Ada!', 'Gunakan Nama Yang Lain!');
+			}
+			break;
+
+		case 'model':
+			$file = $app_dir . '/models/' . $arg[1] . '.php';
+			if (file_harus_tidak_ada($file)) {
+				$filenya = <<<EOT
+<?php
+
+namespace app\\models;
+
+use vframework\\base\\model as BaseModel;
+
+class {1} extends BaseModel {
+	protected static {?}tb_name 	= '{1}';
+	protected static {?}id_collum = 'id';
+
+}
+EOT;
+				$filenya = str_replace('{?}', '$', $filenya);
+				$filenya = str_replace('{1}', $arg[1], $filenya);
+				if (file_put_contents($file, $filenya)) {
+					success('Model Berhasil Dibuat!', 'system/app/models/'.$arg[1].'.php');
+				} else {
+					error('Gagal Membuat Model!', 'Cek Akses Permisi Atau Lainya');
+				}
+			} else {
+				error('Model [' . $arg[1] . '] Sudah Ada!', 'Gunakan Nama Yang Lain!');
+			}
+			break;
+		
+		default:
+			# code...
+			break;
+	}
+}
+
+function file_harus_ada($file){
+	if (!file_exists($file)) {
+		return false;
+	} else {
+		return true;
+	}
+}
+function file_harus_tidak_ada($file){
+	if (file_exists($file)) {
+		return false;
+	} else {
+		return true;
+	}
+}
+
+
+function run_migration($action, $file_migration){
+	switch ($action) {
+		case 'list':
+			if (file_exists(SYSTEM_ROOT . '/migration')) {
+				$list = array_diff(scandir(SYSTEM_ROOT . '/migration'), array('..', '.'));
+
+				if (count($list) > 0) {
+					desain('HEADER');
+					desain('TITLE', 'Daftar File Migration :');
+					foreach ($list as $file_name) {
+						$file_name = str_replace('.vmf', '', $file_name);
+						echo '[+] ' . $file_name;
+						echo "\n";
+					}
+					desain('FOOTER');
+				} else {
+					desain('HEADER');
+					desain('TITLE', 'Daftar File Migration :');
+					echo 'Tidak Ada Satupun.';
+					desain('FOOTER');
+				}
+			} else {
+				error("Folder Migration Tidak Ada. [" . SYSTEM_ROOT . "/migration]", "Sesuaikan Folder System atau Cek Kembali Folder Migration.");
+			}
+			break;
+		case 'create':
+			desain('HEADER');
+			echo "[+] Menyiapkan...\n";
+			//sleep(1);
+
+			echo "   [-] Cek Folder Migration...\n";
+			$mig_dir = SYSTEM_ROOT . '/migration';
+			if (!file_exists($mig_dir)) {
+				echo "========[ ERROR : Folder Migration Tidak Ditemukan.";
+				exit(1);
+				die();
+			}
+			//sleep(1);
+
+			echo "   [-] Menjalankan Composer...\n";
+			if (!file_exists(__DIR__ . '/vendor/autoload.php')) {
+				echo "========[ ERROR : Composer Autoload Tidak Ditemukan.";
+				exit(1);
+				die();
+			}
+			require __DIR__ . '/vendor/autoload.php';
+			//sleep(1);
+			
+			echo "   [-] Load Config...\n";
+			$config 				= new vframework\config\config();
+			//sleep(1);
+
+			echo "   [-] Load Library...\n";
+			//sleep(1);
+
+			echo "[+] Membuat...\n";
+			//sleep(1);
+
+			echo "   [-] Koneksi Ke Database...\n";
+			$db = new DBBackup(array(
+						'driver' => $config::get('db_driver'),
+						'host' => $config::get('db_host'),
+						'user' => $config::get('db_user'),
+						'password' => $config::get('db_password'),
+						'database' => $config::get('db_name')
+					));
+			//sleep(1);
+
+			echo "   [-] Backup Database...\n";
+			$backup = $db->backup();
+
+			if(!$backup['error']){
+				print_r($backup);die();
+				$filenya = $backup['msg'];
+			} else {
+				echo 'An error has ocurred.';
+				exit(1);
+				die();
+			}
+
+			echo "\n\n\n";
+
+			$file_mig = $mig_dir . '/' . $file_migration . '.vmf';
+
+			if (file_put_contents($file_mig, $filenya)) {
+				desain('TITLE', 'Berhasil Membuat File Migration ['.$file_migration.']');
+			} else {
+				desain('TITLE', 'Gagal Membuat File Migration ['.$file_migration.'], Cek Akses Permisi Atau Lainya');
+			}
+
+
+			desain('FOOTER');
+			break;
+		
+		default:
+			# code...
+			break;
+	}
+}

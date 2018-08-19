@@ -1,0 +1,5 @@
+-bootstrap[4.1.2]
+-jquery[3.3.1][min]
+-font-awesome[4.7.0]
+-popper[1.0]
+-codemirro[5.39.2]
