@@ -5,9 +5,23 @@
 		<h1>SELAMAT DATANG!</h1><hr>
 		<div class="card" style="width: 100%;">
 			<div class="card-body">
-				<p>
-					Ini adalah halaman home default dari kami. anda bisa mengubahnya di :<br>
-				</p><Br>
+				<h2>Apa Yang Baru Di V1.4.3 ?</h2><hr>
+				<ul>
+					<li><a href="dokumentasi#csrf">CSRF</a></li>
+					<li><a href="dokumentasi#httprequest-validator">Form Validator</a></li>
+					<li><a href="dokumentasi#httprequest">Remake HTTPRequests</a></li>
+					<li><a href="dokumentasi#router-routename">Route Name</a></li>
+					<li><a href="dokumentasi#lib-redirect">Route Redirect</a></li>
+					<li>
+						<a href="dokumentasi#router-routegroup">Route Group - Prefix</a>
+					</li>
+					<li><a href="dokumentasi#router-routemethod">Route Method Baru [PATCH, OPTION]</a></li>
+				</ul>
+			</div>
+		</div>
+		<div class="card" style="width: 100%;">
+			<div class="card-body">
+				<span>Ini adalah halaman home default dari kami. anda bisa mengubahnya di :</span><hr>
 				<b>Router :</b>
 				<div class="box-code">
 					system\routes\web.php
@@ -22,6 +36,9 @@
 				</div>
 				<div class="box-code">
 					system\app\views\default\docs.php
+				</div>
+				<div class="box-code">
+					system\app\views\default\404.php
 				</div>
 				<br>
 				<span>Lihat Lainya :</span>

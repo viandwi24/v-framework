@@ -1,11 +1,12 @@
 <?php
 
 use vframework\router\error;
+use vframework\base\view;
 use vframework\exception\handle as HandleException;
 
 ##### System Error
 error::set('404', function(){
-	return "404";
+	return view::make('default.404');
 });
 error::set('csrf_error', function($arg){
 	try {

@@ -3,7 +3,7 @@
 namespace vframework\router;
 
 use vframework\config\config;
-use vframework\router\route;
+use vframework\router\route as route;
 use vframework\exception\handle as HandleException;
 
 

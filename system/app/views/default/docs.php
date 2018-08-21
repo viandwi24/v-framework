@@ -81,19 +81,21 @@ route::get('/', function(){
 
 				<hr>
 
-				<p><b>Kami Menyediakan 4 Macam Metode Route :</b></p>
+				<p id="router-routemethod"><b>Kami Menyediakan 4 Macam Metode Route :</b></p>
 				<ul>
 					<li>GET</li>
 					<li>POST</li>
 					<li>PUT</li>
 					<li>DELETE</li>
+					<li>PATCH</li>
+					<li>OPTION</li>
 				</ul>
 				<p>
 					Masing - Masing Metode Route Memiliki Prioritas berdasarkan level prioritas nya :
 				</p>
-				<pre style="text-align: center;" class="box-code"> PUT == DELETE => POST => GET </pre>
-				<p>Dilihat Dari Prioritas Level Diatas, PUT dan DELETE Sejajar. Maka Prioritas 
-					Route Yang Didahulukan Terlebih dahulu adalah PUT dan DELETE, jika route tidak ada
+				<pre style="text-align: center;" class="box-code"> PUT == DELETE == PATCH == OPTION => POST => GET </pre>
+				<p>Dilihat Dari Prioritas Level Diatas, PUT, PACTH, OPTION dan DELETE Sejajar. Maka Prioritas 
+					Route Yang Didahulukan Terlebih dahulu adalah PUT, PACTH, OPTION dan DELETE, jika route tidak ada
 					maka akan di arahkanke metode POST, jika route POST tidak ada maka akan dilajutkan
 					diarahkan ke metode GET. Dan Jika ROute GET tidak ditemukan juga maka request akan 
 					dihentikan dan ditampilkan pemberitahuan error 404.
@@ -117,6 +119,12 @@ route::post('/form_tambah', 'PageController@simpan_db');</pre>
 						<b>route::delete</b> akan dijalankan jika suatu request memiliki key post "_delete".
 					</li>
 					<li>
+						<b>route::patch</b> akan dijalankan jika suatu request memiliki key post "_patch".
+					</li>
+					<li>
+						<b>route::option</b> akan dijalankan jika suatu request memiliki key post "_option".
+					</li>
+					<li>
 						<b>route::post</b> akan di jalankan jika suatu request memiliki request method form post didalamnya. Jika Tidak maka akan diabaikan.
 					</li>
 					<li>
@@ -127,23 +135,78 @@ route::post('/form_tambah', 'PageController@simpan_db');</pre>
 
 				<hr>
 
-				<p><b>Mengirim Request Method PUT atau DELETE</b></p>
-				<p>Dalam View File anda diharuskan menambahkan input key dengan attribut name _put</p>
+				<p><b>Mengirim Request Method PUT, PACTH, OPTION atau DELETE</b></p>
+				<p>Dalam View File anda diharuskan menambahkan input key dengan attribut name="method"</p>
 				<pre class="box-code">
 &lt;form method="POST"&gt;
 	&lt;input type="hidden" name="_put"&gt;
+	@csrf
 &lt;/form&gt;
 </pre>
 				<pre class="box-code">
 &lt;form method="POST"&gt;
 	&lt;input type="hidden" name="_delete"&gt;
+	@csrf
 &lt;/form&gt;
 </pre>
-			<p>
-				Setelah itu barulah anda bisa mengatur nya dalam route
-			</p>
-			<pre class="box-code">route::put('/url_route', 'controller@method');
-route::delete('/url_route', 'controller@method');</pre>
+				<pre class="box-code">
+&lt;form method="POST"&gt;
+	&lt;input type="hidden" name="_patch"&gt;
+	@csrf
+&lt;/form&gt;
+</pre>
+				<pre class="box-code">
+&lt;form method="POST"&gt;
+	&lt;input type="hidden" name="_option"&gt;
+	@csrf
+&lt;/form&gt;
+</pre>
+				<p>
+					Setelah itu barulah anda bisa mengatur nya dalam route
+				</p>
+				<pre class="box-code">route::put('/url_route', 'controller@method');
+	route::delete('/url_route', 'controller@method');
+	route::patch('/url_route', 'controller@method');
+	route::option('/url_route', 'controller@method');</pre>
+	<br>
+				<hr>
+				<p id="router-routename"><b>Route Name</b></p>
+				<p>
+					Menamai Route Juga Dapat Berfungsi Sebagai Penghubung Diantara banyak
+					library nantinya. Di Versi saat ini kegunaan menamai route dapat digunakan di
+					library "redirect". dengan begitu anda tidak usah menulis url dalam sebuah route.
+					cukup anda panggil melalui nama route tersebut.
+				</p>
+				<pre class="box-code">route::get('/', 'controller@method')->name('home');</pre>
+				<p>
+					Lalu untuk me redirect ke route bernama "home" gunakan library redirect dan
+					tulis seperti berikut :
+				</p>
+				<pre class="box-code">redirect::route('home');</pre>
+
+				<br><hr>
+
+				<h3 id="router-routegroup">Route Group</h3><br>
+				<p><b>Route Prefix</b></p>
+				<p>
+					Semisal anda memiliki banyak url yang memilik awalan sama
+					yaitu "/admin/", maka anda tidak perlu menuliskanya seperti ini :
+				</p>
+				<pre class="box-code">route::get('/admin/', 'controller@method');
+route::get('/admin/post', 'controller@method');					
+route::get('/admin/setting', 'controller@method');
+...
+route::get('/admin/logout', 'controller@method');
+</pre>
+				<p>Cara diatas sangat membuang waktu anda, cukup gunakan fungsi route::prefix()</p>
+				<pre class="box-code">route::prefix('/admin', function(){
+	route::get('/', 'controller@method');
+	route::get('/post', 'controller@method');					
+	route::get('/setting', 'controller@method');
+	...
+	route::get('/logout', 'controller@method');
+});
+</pre>
 			</div>
 		</div>
 		<div class="card" style="width: 100%;">				
@@ -330,7 +393,7 @@ tbauth::insert($user);</pre>
 	&lt;input type="text" name="nama"&gt;
 &lt;/form&gt;</pre>
 				<hr style="margin-top: 15px;">
-				<h3>Validasi Input</h3>
+				<h3 id="httprequest-validator">Validasi Input</h3>
 				<p>Contoh Dalam Controller :</p>
 				<pre class="box-code">public function insert_data($params, Request $request){
 	$request->validate(['nama' => 'required|min:10']);
@@ -538,13 +601,18 @@ db::tb("tabel_admin")->where('id', 1)->update($array_update);
 				<p>Contoh Melakukan Redirect : </p>
 				<pre class="box-code">redirect::now('user/tambah_data/');</pre>
 				<pre class="box-code">redirect::now('https://www.google.com/');</pre>
+				<p><b>Redirect Ke Route Yang Telah Bernama : </b></p>
+				<p>Redirect :</p>
+				<pre class="box-code">redirect::name('home');</pre>
+				<p>Route :</p>
+				<pre class="box-code">route::get('/', 'controller@method')->name('home');</pre>
 			</div>
 		</div>
 
 		<div class="card" style="width: 100%;">				
 			<div class="card-body">
 				<h2 id="lib-url"># Url</h2><hr>
-				<p><b>Class Library Redirect :</b></p>
+				<p><b>Class Library URL :</b></p>
 				<pre class="box-code">use vframework\lib\url;</pre>
 				<p>Contoh: </p>
 				<pre class="box-code">$base_url = url::base();</pre>

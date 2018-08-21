@@ -13,45 +13,130 @@ class route {
 	private static $route_post = array();
 	private static $route_put = array();
 	private static $route_delete = array();
+	private static $route_patch = array();
+	private static $route_option = array();
+	
+	public static $route_name = array();
+	public static $route_name_info = array();
 
 	private static $temp_route_set_method = NULL;
+	private static $temp_route_prefix = NULL;
 
 
 	public static function get($route_url, $route_action){
+		if (!self::$temp_route_prefix == NULL) {$route_url = self::$temp_route_prefix.'/'.$route_url;}
 		array_push(self::$route_get, [self::clean_url($route_url), $route_action, ''] );
 		self::$temp_route_set_method = "get";
 		return new static;
 	}
 	public static function post($route_url, $route_action){
+		if (!self::$temp_route_prefix == NULL) {$route_url = self::$temp_route_prefix.'/'.$route_url;}
 		array_push(self::$route_post, [ self::clean_url($route_url), $route_action, ''] );
 		self::$temp_route_set_method = "post";
 		return new static;
 	}
 	public static function put($route_url, $route_action){
+		if (!self::$temp_route_prefix == NULL) {$route_url = self::$temp_route_prefix.'/'.$route_url;}
 		array_push(self::$route_put, [self::clean_url($route_url), $route_action, ''] );
 		self::$temp_route_set_method = "put";
 		return new static;
 	}
 	public static function delete($route_url, $route_action){
+		if (!self::$temp_route_prefix == NULL) {$route_url = self::$temp_route_prefix.'/'.$route_url;}
 		array_push(self::$route_delete, [self::clean_url($route_url), $route_action, ''] );
 		self::$temp_route_set_method = "delete";
+		return new static;
+	}
+	public static function patch($route_url, $route_action){
+		if (!self::$temp_route_prefix == NULL) {$route_url = self::$temp_route_prefix.'/'.$route_url;}
+		array_push(self::$route_patch, [self::clean_url($route_url), $route_action, ''] );
+		self::$temp_route_set_method = "patch";
+		return new static;
+	}
+	public static function option($route_url, $route_action){
+		if (!self::$temp_route_prefix == NULL) {$route_url = self::$temp_route_prefix.'/'.$route_url;}
+		array_push(self::$route_option, [self::clean_url($route_url), $route_action, ''] );
+		self::$temp_route_set_method = "option";
 		return new static;
 	}
 
 	public static function name($name){
 		if (self::$temp_route_set_method != NULL) {
+
+			if (in_array($name, self::$route_name)){
+				try {
+					throw new HandleException();						
+				} catch (HandleException $e){
+					$e->renderError('Nama Route ['.$name.'] Sudah Ada!', get_called_class(), 'Gunakan Nama Lain!');
+				}
+			}
+
 			$method = self::$temp_route_set_method;
 
-			if ($method == 'get') { self::$route_get[count(self::$route_get)-1][2] = $name;
-			} elseif ($method == 'post') { self::$route_post[count(self::$route_post)-1][2] = $name;
-			} elseif ($method == 'put') { self::$route_put[count(self::$route_put)-1][2] = $name;
-			} elseif ($method == 'delete') { self::$route_delete[count(self::$route_delete)-1][2] = $name;
+			if ($method == 'get') { 
+				self::$route_get[count(self::$route_get)-1][2] = $name;
+				$url = self::$route_get[count(self::$route_get)-1][0];
+				$action = self::$route_get[count(self::$route_get)-1][1];
+				
+			} elseif ($method == 'post') { 
+				self::$route_post[count(self::$route_post)-1][2] = $name;
+				$url = self::$route_post[count(self::$route_post)-1][0];
+				$action = self::$route_post[count(self::$route_post)-1][1];
+
+			} elseif ($method == 'put') { 
+				self::$route_put[count(self::$route_put)-1][2] = $name;
+				$url = self::$route_put[count(self::$route_put)-1][0];
+				$action = self::$route_put[count(self::$route_put)-1][1];
+
+			} elseif ($method == 'delete') { 
+				self::$route_delete[count(self::$route_delete)-1][2] = $name;
+				$url = self::$route_delete[count(self::$route_delete)-1][0];
+				$action = self::$route_delete[count(self::$route_delete)-1][1];
+
+			} elseif ($method == 'patch') { 
+				self::$route_patch[count(self::$route_patch)-1][2] = $name;
+				$url = self::$route_patch[count(self::$route_patch)-1][0];
+				$action = self::$route_patch[count(self::$route_patch)-1][1];
+
+			} elseif ($method == 'option') { 
+				self::$route_option[count(self::$route_option)-1][2] = $name;
+				$url = self::$route_option[count(self::$route_option)-1][0];
+				$action = self::$route_option[count(self::$route_option)-1][1];
+			} else {
+				return new static;
 			}
+
+			array_push(self::$route_name, $name);
+			self::$route_name_info[$name] = [$method, $url, $action];
+
+
 		}
 
 		return new static;
 	}
 
+	public static function prefix($prefix, $route) {
+		$prefix = self::clean_url($prefix);
+
+		self::$temp_route_prefix = $prefix;
+
+		if (is_callable($route)) {
+			$route();
+		}
+		
+		self::$temp_route_prefix = NULL;
+		return new static;
+	}
+
+	private static function dd($data){
+		echo "<pre>";
+		print_r($data);
+		echo "</pre>";
+		die();
+	}
+	public static function tes(){
+		self::dd(self::$route_name_info);
+	}
 	public static function now(){
 
 		if ($_SERVER['REQUEST_METHOD'] == "POST" and isset($_POST['_put'])) {
@@ -60,6 +145,14 @@ class route {
 			}
 		} elseif ($_SERVER['REQUEST_METHOD'] == "POST" and isset($_POST['_delete'])) {
 			if (!self::route_start('DELETE')) {
+				error::make('404');
+			}
+		} elseif ($_SERVER['REQUEST_METHOD'] == "POST" and isset($_POST['_patch'])) {
+			if (!self::route_start('PATCH')) {
+				error::make('404');
+			}
+		} elseif ($_SERVER['REQUEST_METHOD'] == "POST" and isset($_POST['_option'])) {
+			if (!self::route_start('OPTION')) {
 				error::make('404');
 			}
 		} elseif ($_SERVER['REQUEST_METHOD'] == "POST") {
@@ -91,6 +184,14 @@ class route {
 
 			case 'DELETE':
 				$route = self::$route_delete;
+				break;
+
+			case 'PATCH':
+				$route = self::$route_patch;
+				break;
+
+			case 'OPTION':
+				$route = self::$route_option;
 				break;
 
 			default:

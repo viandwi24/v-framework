@@ -2,10 +2,12 @@
 
 namespace vframework\lib;
 
+use vframework\exception\handle as HandleException;
 use vframework\config\config;
+use vframework\router\route;
 
 class redirect {
-	public static function now_old($url){
+	private static function now_old($url){
 
 		$url = explode('/', $url);
 		foreach ($url as $u_k => $u_v) {
@@ -15,6 +17,20 @@ class redirect {
 		}
 		$url = implode('/', $url);
 		return config::get('base_url') . '/' . $url;
+	}
+
+	public static function route($name) {
+		$list_route_name = route::$route_name;
+
+		if (!in_array($name, $list_route_name)) {
+			try {
+				throw new HandleException();						
+			} catch (HandleException $e){
+				$e->renderError('Nama Route ['.$name.'] Tidak Ada!', get_called_class(), 'Cek Apakah Route Yang Dipanggil Telah Diberi Nama Yang Sama!');
+			}
+		} else {
+			self::now(route::$route_name_info[$name][1]);
+		}
 	}
 
 	public static function now($uri = '', $method = 'auto', $code = NULL)

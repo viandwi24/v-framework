@@ -35,8 +35,18 @@ class config {
 		$key = strtolower($key);
 		switch ($key) {
 			case 'base_url':
-				if (null !== @$config['base_url']){
-					$value = $config['base_url'];
+				if (null !== @$config['base_url'] and null !== @$config['base_url_protocol'] and $config['base_url'] != "" and $config['base_url_protocol'] != ''){
+
+					$url = explode('/', $config['base_url']);
+					foreach ($url as $uri => $uv) {
+						if ($uv == '') {
+							unset($url[$uri]);
+						}
+					}
+
+					$config['base_url_protocol'] = str_replace('://', '', $config['base_url_protocol']);
+
+					$value = $config['base_url_protocol'] . "://" . implode('/', $url);
 				} else {
 					$value = BASE_URL;
 				}

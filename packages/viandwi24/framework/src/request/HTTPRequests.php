@@ -52,6 +52,11 @@ class HTTPRequests {
 		return $this->input;
 	}
 
+	private function str_replace_first($from, $to, $content) {
+	    $from = '/'.preg_quote($from, '/').'/';
+	    return preg_replace($from, $to, $content, 1);
+	}
+
 
 	public function getReqUrl($return_array = false){
 		$reqUrl = $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
@@ -61,35 +66,18 @@ class HTTPRequests {
 				unset($reqUrl[$rU]);
 			}
 		}
-		$reqUrl = implode('/', $reqUrl);
+		$reqUrl = PROTOCOL . '://' . implode('/', $reqUrl);
+		$baseUrl = config::get('base_url');
 
-		$baseUrl = config::get("base_url");
-		$baseUrl = str_replace('http://', '', $baseUrl);
-		$baseUrl = str_replace('https://', '', $baseUrl);
-
-		$reqUrl = str_replace( $baseUrl, '', $reqUrl);
-
-		
+		$reqUrl = str_replace($baseUrl, '', $reqUrl);
 		$reqUrl = explode('/', $reqUrl);
+
 		foreach ($reqUrl as $rU => $rU_v) {
 			if ($rU_v == '') {
 				unset($reqUrl[$rU]);
 			}
 		}
 		$reqUrl = implode('/', $reqUrl);
-
-		$reqUrl = explode('?', $reqUrl);
-
-		try {
-			if (count($reqUrl) == 1 or count($reqUrl) == 2) {}else{ 
-				throw new HandleException(); 
-			}
-			
-		} catch (HandleException $e) {
-			$e->renderError('Terdapat Karakter Yang Tidak Diperbolehkan Di Tulis Di URL!', '-', 'Jangan Menambahkan Karakter Yang Tidak Diperbolehkan Di URL :<b> ?  {  }  |</b>');
-		}
-
-		$reqUrl = $reqUrl[0];
 
 		if ($return_array) {
 			return explode('/', $reqUrl);
