@@ -1,0 +1,19 @@
+{
+    "name": "vifa/framework",
+    "description": "Framework PHP Sederhana Untuk Meringankan pekerjaan.",
+    "license": "MIT",
+    "type": "project",
+    "require": {
+    },
+    "require-dev": {
+    },
+    "autoload": {
+        "classmap": [
+        ],
+        "psr-4": {
+            "vifaframework\\": "packages/viandwi24/framework/src",
+            "app\\": "system/app"
+        }
+    },
+    "minimum-stability": "dev"
+}
