@@ -28,4 +28,4 @@ Framework PHP Sederhana Yang Meringankan Perkerjaan Mu.
 
 
 # NOTE
-See Documentation In https://vifaframework.site/docs/
+See Documentation In https://vifaframework.000webhostapp.com/dokumentasi
